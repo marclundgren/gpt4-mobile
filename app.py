@@ -54,5 +54,7 @@ def ask_gpt4(system_intel, prompt):
   # Display the result
   # display(Markdown(result['choices'][0]['message']['content']))
 
+  return result['choices'][0]['message']['content']
+
 # Call the function above
 ask_gpt4(system_intel, prompt)

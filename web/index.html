@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat with GPT-4</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        max-width: 480px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .chat-box {
+        background-color: #f1f1f1;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+        padding: 20px;
+        overflow: auto;
+        height: 300px;
+      }
+
+      .chat-line {
+        margin-bottom: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px dashed #ccc;
+      }
+
+      .chat-line:last-child {
+        border-bottom: 0;
+      }
+
+      .loading {
+        text-align: center;
+        display: none;
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="chat-box" id="chatBox"></div>
+      <form id="chatForm">
+        <div>
+          <label for="prompt">Enter your prompt:</label>
+          <textarea id="prompt" rows="4" style="width: 100%"></textarea>
+        </div>
+        <button type="submit" id="submitBtn">Send</button>
+      </form>
+      <div class="loading" id="loading">Loading...</div>
+    </div>
+    <script>
+      $(document).ready(function () {
+        var chatBox = $("#chatBox");
+        var chatForm = $("#chatForm");
+
+        chatForm.on("submit", function (event) {
+          event.preventDefault();
+          sendRequest();
+        });
+
+        function sendRequest() {
+          var promptValue = $("#prompt").val();
+
+          if (!promptValue.trim()) {
+            return;
+          }
+
+          // Add user prompt to chat box
+          addChatLine("User: " + promptValue);
+
+          // Clear input and show loading animation
+          $("#prompt").val("").prop("disabled", true);
+          $("#submitBtn").prop("disabled", true);
+          $("#loading").show();
+
+          // Simulating a request to the Python app.py
+          setTimeout(function () {
+            // Dummy text, replace with actual response from Python
+            var gpt4Response = "GPT-4 says: " + promptValue;
+            addChatLine(gpt4Response);
+
+            // Hide loading animation and enable textarea
+            $("#loading").hide();
+            $("#prompt").prop("disabled", false);
+            $("#submitBtn").prop("disabled", false);
+          }, 1000);
+        }
+
+        function addChatLine(text) {
+          var chatLine = $('<div class="chat-line"></div>').html(text);
+          chatBox.append(chatLine);
+          chatBox.scrollTop(chatBox[0].scrollHeight);
+        }
+      });
+    </script>
+  </body>
+</html>

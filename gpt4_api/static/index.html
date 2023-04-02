@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GPT-4 API</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>GPT-4 API</h1>
+      <textarea id="prompt" rows="5" placeholder="Enter your prompt"></textarea>
+      <button id="submit">Submit</button>
+      <div id="loader" hidden>Loading...</div>
+      <div id="responses"></div>
+    </div>
+    <script>
+      const submitButton = document.getElementById("submit");
+      const promptTextArea = document.getElementById("prompt");
+      const loader = document.getElementById("loader");
+      const responsesDiv = document.getElementById("responses");
+
+      async function getAllResponses() {
+        const response = await fetch("/responses");
+        if (!response.ok) {
+          alert("Error getting responses");
+          return;
+        }
+        const data = await response.json();
+        data.forEach((d) => {
+          addResponseToPage(d.prompt, d.response);
+        });
+      }
+
+      function addResponseToPage(prompt, response) {
+        const el = document.createElement("div");
+        el.innerHTML = `<p>Prompt: ${prompt}</p><p>Response: ${response}</p>`;
+        responsesDiv.appendChild(el);
+        promptTextArea.value = "";
+      }
+
+      submitButton.addEventListener("click", async () => {
+        const promptText = promptTextArea.value.trim();
+        if (!promptText) {
+          alert("Please enter a prompt");
+          return;
+        }
+        submitButton.disabled = true;
+        // loader.hidden = false;
+        // loader.display = "block";
+        loader.style.visibility = "visible";
+
+        const data = { prompt: promptText };
+        const response = await fetch("/prompt", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          alert("Error submitting prompt");
+          return;
+        }
+
+        const result = await response.json();
+        addResponseToPage(promptText, result.response);
+        // loader.hidden = true;
+        // loader.display = "none";
+        loader.style.visibility = "hidden";
+        submitButton.disabled = false;
+      });
+
+      getAllResponses();
+    </script>
+  </body>
+</html>
+{}
